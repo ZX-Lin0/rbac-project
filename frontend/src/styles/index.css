@@ -1,0 +1,290 @@
+/* ==========================================================================
+   全局样式与现代科技感主题体系
+   基于 Element Plus CSS 变量定制与高质感卡片布局
+   ========================================================================== */
+
+:root {
+  /* 科技靛蓝/紫罗兰主色调体系 */
+  --el-color-primary: #4f46e5;
+  --el-color-primary-rgb: 79, 70, 229;
+  --el-color-primary-light-3: #818cf8;
+  --el-color-primary-light-5: #a5b4fc;
+  --el-color-primary-light-7: #c7d2fe;
+  --el-color-primary-light-8: #e0e7ff;
+  --el-color-primary-light-9: #eef2ff;
+  --el-color-primary-dark-2: #3730a3;
+
+  /* 辅助状态色系统 (Tailwind Emerald, Amber, Rose, Slate) */
+  --el-color-success: #10b981;
+  --el-color-success-light-9: #ecfdf5;
+  --el-color-warning: #f59e0b;
+  --el-color-warning-light-9: #fffbeb;
+  --el-color-danger: #ef4444;
+  --el-color-danger-light-9: #fef2f2;
+  --el-color-info: #64748b;
+  --el-color-info-light-9: #f8fafc;
+
+  /* 页面冷灰底色，与纯白卡片形成通透层次 */
+  --el-bg-color-page: #f1f5f9;
+  --el-text-color-primary: #1e293b;
+  --el-text-color-regular: #475569;
+  --el-text-color-secondary: #94a3b8;
+  --el-border-color-lighter: #f1f5f9;
+  --el-border-color-light: #e2e8f0;
+  --el-border-color: #cbd5e1;
+
+  /* 圆角与阴影体系 */
+  --el-border-radius-base: 8px;
+  --el-border-radius-round: 20px;
+  --tech-card-radius: 14px;
+  --tech-card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --tech-card-shadow-hover: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  color: var(--el-text-color-primary);
+  background-color: var(--el-bg-color-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea,
+.el-button,
+.el-input,
+.el-input__inner,
+.el-select,
+.el-table,
+.el-menu,
+.el-dialog {
+  font-family: inherit !important;
+}
+
+/* 优雅滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 通用页面布局容器 */
+.app-container {
+  padding: 24px;
+}
+
+/* 科技感主卡片容器 */
+.table-card {
+  border-radius: var(--tech-card-radius);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--tech-card-shadow);
+  padding: 24px;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.table-card:hover {
+  box-shadow: var(--tech-card-shadow-hover);
+  border-color: #cbd5e1;
+}
+
+/* 表格顶部操作栏 */
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 表格全局美化：去纵向生硬框线，极浅灰优雅表头，平滑悬浮过渡 */
+.el-table {
+  --el-table-header-bg-color: #f8fafc !important;
+  --el-table-border-color: #f1f5f9 !important;
+  --el-table-row-hover-bg-color: #f8faff !important;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.el-table th.el-table__cell {
+  background-color: #f8fafc !important;
+  color: #334155 !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  height: 48px;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.el-table td.el-table__cell {
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 14px 0 !important;
+  transition: background-color 0.25s ease;
+}
+
+/* 按钮微动效增强 */
+.el-button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 500 !important;
+}
+
+.el-button--primary:not(.is-link):not(.is-text) {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+}
+
+.el-button--primary:not(.is-link):not(.is-text):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35) !important;
+}
+
+.el-button--primary:not(.is-link):not(.is-text):active {
+  transform: translateY(0);
+}
+
+.el-button--default:not(.is-link):not(.is-text):hover {
+  transform: translateY(-1px);
+  border-color: #c7d2fe;
+  color: #4f46e5;
+  background-color: #f5f7ff;
+}
+
+/* 操作列链接按钮胶囊感 */
+.table-operations .el-button.is-link {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-left: 4px;
+}
+
+.table-operations .el-button--primary.is-link:hover {
+  background-color: #eef2ff;
+}
+
+.table-operations .el-button--warning.is-link:hover {
+  background-color: #fffbeb;
+}
+
+.table-operations .el-button--danger.is-link:hover {
+  background-color: #fef2f2;
+}
+
+/* 表格底部翻页器容器 */
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid #f8fafc;
+}
+
+/* 弹窗升级：大圆角、科技感标题与毛玻璃边框 */
+.el-dialog {
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+.el-dialog__header {
+  margin-right: 0 !important;
+  padding: 20px 24px 16px !important;
+  border-bottom: 1px solid #f1f5f9;
+  background-color: #fafbfc;
+}
+
+.el-dialog__title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.el-dialog__body {
+  padding: 24px 24px 16px !important;
+}
+
+.el-dialog__footer {
+  padding: 16px 24px 20px !important;
+  border-top: 1px solid #f1f5f9;
+  background-color: #fafbfc;
+}
+
+/* 状态标签圆角药丸胶囊风格 */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.status-pill-success {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.status-pill-danger {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-pill-success .status-dot {
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+.status-pill-danger .status-dot {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+}

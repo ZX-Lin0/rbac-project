@@ -1,0 +1,6 @@
+{
+  "name": "RBAC 权限管理系统",
+  "description": "基于 Vue 3 + Element Plus + Pinia + Axios 构建的 RBAC 权限管理系统前端",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

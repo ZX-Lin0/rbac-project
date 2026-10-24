@@ -1,0 +1,25 @@
+# 部署环境的真实密码
+deploy/.env
+
+# 本地临时文件夹
+mysql-data/
+
+# 系统文件
+.DS_Store
+# 忽略备份的git文件夹
+**/.git_backup/
+
+**/.aistudio/
+
+# 忽略前端打包产物
+dist/
+dist.zip
+*.zip
+
+# 忽略 AI Studio 临时产物
+**/.aistudio/
+**/aistudio/
+
+# 忽略 IDEA 的本地配置
+.idea/
+*.iml
