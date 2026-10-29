@@ -6,8 +6,8 @@
 
 ### 后端 (Backend)
 - **核心框架**：Spring Boot 4.0.8、Spring MVC
-- **持久层**：MyBatis-Plus 3.5.13、MySQL 8.x
-- **缓存**：Redis (Alpine)
+- **持久层**：MyBatis-Plus 3.5.13、MySQL 26.7
+- **缓存**：Redis 
 - **安全认证**：JWT (jjwt 0.12.6)、Spring Security Crypto (BCrypt)
 - **权限控制**：Spring AOP + 自定义注解
 - **接口文档**：Springdoc OpenAPI + Swagger UI
@@ -21,12 +21,12 @@
 ### 部署运维 (DevOps)
 - **容器化**：Docker、Docker Compose
 - **Web 服务器**：Nginx (静态资源托管 + 反向代理)
-- **系统环境**：Ubuntu 22.04 (阿里云 ECS)
+- **系统环境**：Ubuntu 24.04 (阿里云 ECS)
 
 ## 核心功能
 
 - **认证与授权**：JWT 无状态登录，结合 Redis 黑名单实现 Token 主动失效。
-- **细粒度权限**：基于自定义注解 `@RequirePermission` 与 AOP 实现接口级校验，前端同步实现动态菜单与按钮级隐藏。
+- **细粒度权限**：基于自定义注解 `@RequirePermission` 与 AOP 实现接口级校验，前端同步实现动态菜单与按钮隐藏。
 - **并发与缓存**：Redis 缓存用户权限，减少高频四表联查；采用延迟双删策略保证缓存一致性。
 - **数据安全**：BCrypt 密码加盐哈希、MyBatis-Plus 逻辑删除防止误删。
 - **容器化部署**：前后端、MySQL、Redis 完整 Docker 编排，一键启动。
