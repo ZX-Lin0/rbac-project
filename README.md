@@ -16,12 +16,12 @@
 - **核心框架**：Vue 3 (Composition API) + Vite
 - **UI 组件库**：Element Plus
 - **网络请求**：Axios
-- **状态管理/路由**：Vue Router、Pinia (或 LocalStorage)
+- **状态管理/路由**：Vue Router
 
 ### 部署运维 (DevOps)
 - **容器化**：Docker、Docker Compose
 - **Web 服务器**：Nginx (静态资源托管 + 反向代理)
-- **系统环境**：Ubuntu 24.04 (阿里云 ECS)
+- **系统环境**：Ubuntu 24.04 
 
 ## 核心功能
 
@@ -53,7 +53,7 @@ rbac-project/
 
 配置本地 MySQL 和 Redis。
 
-配置环境变量 MYSQL_PWD (或修改 application.yaml)。
+配置环境变量 MYSQL_PASSWORD (或修改 application.yaml)。
 
 运行 RbacDemoApplication，访问 Swagger: http://localhost:8080/swagger-ui/index.html
 
@@ -78,5 +78,7 @@ docker compose up -d --build
 
 ## 后续优化
 引入 Refresh Token 机制
+
 权限缓存精确失效（按角色反向查用户）
+
 基于 AOP 的全局操作日志记录
