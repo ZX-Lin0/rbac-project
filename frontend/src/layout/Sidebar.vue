@@ -51,7 +51,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useAppStore } from '@/stores/app';
-import { User, Avatar, Key } from '@element-plus/icons-vue';
+import { User, Avatar, Key, ChatDotRound } from '@element-plus/icons-vue';
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -76,6 +76,11 @@ const menuConfigs = [
     title: '权限管理',
     icon: Key,
     permission: 'role:list' // 后端契约注明权限为 role:list
+  },
+  {
+    path: '/ai-chat',
+    title: 'AI 助手',
+    icon: ChatDotRound
   }
 ];
 
