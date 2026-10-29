@@ -51,6 +51,15 @@ export const routes = [
           // 后端契约明确注明：权限管理接口需要 role:list 权限
           permission: 'role:list'
         }
+      },
+      {
+        path: 'ai-chat',
+        name: 'AiChat',
+        component: () => import('@/views/ai/AiChat.vue'),
+        meta: {
+          title: 'AI 助手',
+          icon: 'Cpu'
+        }
       }
     ]
   },

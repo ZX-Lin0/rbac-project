@@ -1,14 +1,15 @@
-# RBAC 权限管理系统
+# RBAC 权限管理系统后端 (Backend)
 
-基于 Spring Boot 4 + MyBatis-Plus + JWT + Redis 的 RBAC 权限管理系统，支持用户、角色、权限的动态管理，接口级权限校验，以及 Token 主动失效。
+基于 Spring Boot 4 + MyBatis-Plus + JWT + Redis + Spring AI 构建的 RBAC 权限控制系统后端。
 
 ## 技术栈
 
-- **后端**：Spring Boot 4.0.8、Spring MVC、MyBatis-Plus 3.5.13
-- **数据库**：MySQL 8.x
+- **核心框架**：Spring Boot 4.0.8、Spring MVC
+- **持久层**：MyBatis-Plus 3.5.13、MySQL 26.7
 - **缓存**：Redis
-- **认证**：JWT（jjwt 0.12.6）
-- **密码加密**：BCrypt（Spring Security Crypto）
+- **安全认证**：JWT（jjwt 0.12.6）、BCrypt（Spring Security Crypto）
+- **权限控制**：Spring AOP + 自定义注解
+- **AI 能力**：Spring AI 2.0.2、DeepSeek 大模型
 - **接口文档**：Springdoc OpenAPI + Swagger UI
 - **工具**：Lombok、Maven
 
@@ -18,133 +19,92 @@
 - 用户注册、登录（BCrypt 密码加密）
 - JWT Token 签发与校验
 - 基于拦截器的登录校验（401）
-- 基于自定义注解 + AOP 的接口级权限校验（403）
-- 基于 Redis 黑名单的 Token 主动失效
+- 基于自定义注解 `@RequirePermission` + AOP 的接口级权限校验（403）
+- 基于 Redis 黑名单的 Token 主动失效（禁用账号即时踢下线）
 
-### 用户管理
-- 用户列表查询
-- 用户新增（支持同时分配角色）
-- 用户修改（密码、状态）
-- 用户删除（级联删除角色关联）
-- 给用户分配角色
+### 用户、角色与权限管理
+- 完整的 CRUD 接口
+- 分配角色、分配权限（含批量插入优化）
+- 逻辑删除防误删（解决用户名唯一约束冲突）
 
-### 角色管理
-- 角色列表查询
-- 角色新增、修改、删除
-- 给角色分配权限（覆盖式）
-
-### 权限管理
-- 权限列表查询
+### AI 智能查询 (Text-to-SQL)
+- 接入 DeepSeek 大模型，将用户自然语言转换为 SQL
+- 结合 JdbcTemplate 动态执行 SQL 并返回结构化 JSON
+- **安全机制**：正则校验拦截非 SELECT 语句；强制追加 `LIMIT 100` 防全表扫描
 
 ### 基础设施
 - 统一响应体 `R`（code / msg / data）
-- 全局异常处理（区分 401 / 403 / 500）
-- Redis 权限缓存（减少四表联查）
+- 全局异常处理（精准区分 401 / 403 / 500）
+- Redis 权限缓存 + 延迟双删保一致性
 - Swagger 在线接口文档
 
 ## 项目结构
 
-```
-
+```text
 src/main/java/com/example/rbacdemo/
+├── ai/                # AI 业务包
+│   ├── controller/    # AI 接口控制层
+│   ├── dto/           # AI 请求/响应对象
+│   └── service/       # AI 核心业务（Prompt 组装、SQL 安全校验、JdbcTemplate 执行）
 ├── annotation/        # 自定义注解（@RequirePermission）
 ├── aspect/            # AOP 切面（权限校验）
 ├── common/            # 工具类（R、JwtUtil、SecurityUtil、RedisUtil、UserContext）
 ├── config/            # 配置类（WebMvcConfig、SwaggerConfig）
-├── controller/        # 控制器层
+├── controller/        # 基础业务控制层
 ├── dto/               # 数据传输对象
 ├── entity/            # 数据库实体
 ├── exception/         # 自定义异常
 ├── interceptor/       # 拦截器（JWT 校验）
 ├── mapper/            # MyBatis-Plus Mapper
 └── service/           # 业务层
-└── impl/              # 业务实现
 
 ```
 
 ## 快速启动
+### 1. 准备环境
+请确保本地已启动 MySQL 和 Redis，并创建数据库：
 
-### 1. 准备数据库
 ```sql
 CREATE DATABASE rbac_demo DEFAULT CHARACTER SET utf8mb4;
--- 执行建表 SQL（见 docs/schema.sql）
 ```
+### 2. 配置环境变量
+在 IDEA 运行配置中配置以下环境变量：
 
-### 2. 启动 Redis
-```bash
-redis-server.exe
+```text
+MYSQL_PASSWORD=your_database_password_here
+AI_API_KEY=your_api_key_here
 ```
-
-### 3. 修改配置
-编辑 `src/main/resources/application.yaml`，替换数据库和 Redis 连接信息。
-
-### 4. 启动项目
-运行 `RbacDemoApplication`，访问 Swagger：
-```
+### 3. 启动项目
+运行 RbacDemoApplication，访问 Swagger：
 http://localhost:8080/swagger-ui/index.html
-```
 
 ## 核心设计
-
-### RBAC 模型
-采用标准五表设计：
-- `sys_user`：用户
-- `sys_role`：角色
-- `sys_permission`：权限
-- `sys_user_role`：用户-角色关联（多对多）
-- `sys_role_permission`：角色-权限关联（多对多）
-
-用户通过角色间接获得权限，权限以 `模块:操作` 格式定义（如 `user:list`）。
-
 ### 认证与授权流程
-```
+请求进入 JwtInterceptor，校验 Token 合法性及 Redis 黑名单，解析 userId 存入 ThreadLocal。
 
-请求进入
-  ↓
-JwtInterceptor 拦截
-  ├─ 无 Token → 401
-  ├─ Token 无效/过期 → 401
-  ├─ Token 在 Redis 黑名单中 → 401（账号被禁用）
-  └─ 通过 → 解析 userId 存入 ThreadLocal
-  ↓
-PermissionAspect 切面
-  ├─ 从 ThreadLocal 取 userId
-  ├─ 查 Redis 权限缓存（未命中则查数据库并回写）
-  ├─ 比对方法上 @RequirePermission 要求的权限码
-  └─ 无权限 → 403
-  ↓
-Controller 执行
+PermissionAspect 切面拦截 @RequirePermission 注解，从 Redis/数据库查询用户权限码进行比对。
 
-```
+### AI Text-to-SQL 核心流程
+Prompt 组装：将 5 张核心表结构（Schema）与系统预设规则（如“只返回纯 SQL”）拼接注入大模型。
 
-### 缓存一致性
-- 权限缓存 key：`permission:user:{userId}`
-- 用户角色变更 → 删除该用户权限缓存
-- 角色权限变更 → 清空所有 `permission:user:*`（粗粒度，保证一致性优先）
-- 用户禁用/删除 → 写入 `user:disabled:{userId}` 黑名单
+安全拦截：清理可能存在的 Markdown 标记，校验 SQL 必须以 SELECT 开头。
 
-## 遇到的问题与解决
+防全表扫描：若未包含 LIMIT，代码自动追加 LIMIT 100。
 
-### 1. Spring Boot 4 中 AOP Starter 改名
-Spring Boot 4 将 `spring-boot-starter-aop` 改名为 `spring-boot-starter-aspectj`，旧依赖会报 `not found`。
+动态执行：利用 JdbcTemplate.queryForList() 执行动态 SQL，将查询结果封装为 List<Map<String, Object>> 返回。
 
-### 2. MyBatis-Plus 与 Spring Boot 4 不兼容
-旧坐标 `mybatis-plus-boot-starter` 在 Spring Boot 4 下自动配置不生效，需替换为 `mybatis-plus-spring-boot4-starter`。
+### 遇到的问题与解决
+1. Spring Boot 4 兼容性：AOP Starter 更名为 spring-boot-starter-aspectj；MyBatis-Plus 需使用 mybatis-plus-spring-boot4-starter。
 
-### 3. JWT Bearer 前缀导致校验失败
-Swagger 会自动在 Token 前加 `Bearer `，拦截器需主动剥离前缀后再解析。
+2. Spring AI 版本冲突：2.0 版本起，OpenAI Starter 更改为 spring-ai-starter-model-openai，且需配合 Spring Boot 4 使用。
 
-### 4. 全局异常处理器区分 401 / 403 / 500
-通过自定义 `NoPermissionException` 和 `@ExceptionHandler` 精确匹配，避免所有异常都被当作 500 返回。
+3. JWT Bearer 前缀：拦截器主动剥离 Bearer 前缀后再解析，防止 Swagger 或前端传参引发异常。
+
+4. 延迟双删：在用户角色/权限更新后，先删缓存，更新数据库后通过异步线程延迟 500ms 再次删除缓存，保证并发场景下的缓存一致性。
 
 ## 后续优化方向
+引入 Refresh Token
 
-- 引入 Refresh Token，避免 Access Token 过期后强制重新登录
-- 权限缓存改为精确失效（按角色查用户反向删除）
-- 引入操作日志（AOP 记录谁在什么时候做了什么）
-- 补充单元测试和集成测试
+引入 JSqlParser 进行 AST 级别的 SQL 安全校验
 
-
-
-
-
+增加 AI 查询的流式输出 (SSE)
